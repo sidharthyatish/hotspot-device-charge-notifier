@@ -31,18 +31,24 @@ params = (
     ('_', str(ts)),
 )
 
-response = requests.get('http://192.168.1.1/mark_title.w.xml', headers=headers, params=params, verify=False)
-soup = BeautifulSoup(response.text, 'html.parser')
-
-battery_level = int(soup.batt_p.text)
-
-
-if battery_level <=10:
-	notify_notification("Modem battery is very low",str(battery_level))
-	notify_dialog("Modem battery LOW",str(battery_level))
-elif battery_level <=15 or battery_level >=96:
-	notify_notification("Modem battery",str(battery_level))
-
 dateTimeObj = datetime.now()
+try:
+
+    response = requests.get('http://192.168.1.1/mark_title.w.xml', headers=headers, params=params, verify=False, timeout=5)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    battery_level = int(soup.batt_p.text)
+
+
+    if battery_level <=10:
+        notify_notification("Modem battery is very low",str(battery_level))
+        notify_dialog("Modem battery LOW",str(battery_level))
+    elif battery_level <=15 or battery_level >=96:
+        notify_notification("Modem battery",str(battery_level))
+
+except (requests.ConnectionError, requests.Timeout) as e:
+    battery_level=-1
+    print("Unable to connect to modem..")
+
 print(dateTimeObj,battery_level)
 # notify_dialog("Modem battery",str(battery_level))
