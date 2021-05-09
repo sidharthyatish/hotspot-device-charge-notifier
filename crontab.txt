@@ -1,0 +1,1 @@
+*/30 * * * * cd ~/study/wifi-charge-notifier && source ./venv/bin/activate && python main.py >> notifier.log
